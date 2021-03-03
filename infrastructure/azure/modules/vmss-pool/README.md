@@ -1,0 +1,1 @@
+An Azure VMSS module, configured with settings appropriate for use with Azure DevOps virtual machine scale set agents.
