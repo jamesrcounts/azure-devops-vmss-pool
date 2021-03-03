@@ -36,14 +36,14 @@ resource "azurerm_linux_virtual_machine_scale_set" "azp_agents" {
     storage_account_type   = "Standard_LRS"
     caching                = "ReadOnly"
     disk_size_gb           = local.sku.disk_size_gb
-    disk_encryption_set_id = local.disk_encryption_set_id
+    disk_encryption_set_id = var.disk_encryption_set_id
 
     diff_disk_settings {
       option = "Local"
     }
   }
 
-  source_image_id = local.source_image_id
+  source_image_id = var.source_image_id
 
   dynamic "source_image_reference" {
     for_each = var.source_image_reference[*]
