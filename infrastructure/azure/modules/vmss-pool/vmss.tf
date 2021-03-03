@@ -13,7 +13,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "azp_agents" {
 
   admin_ssh_key {
     username   = local.admin_username
-    public_key = tls_private_key.key.public_key_openssh
+    public_key = tls_private_key.admin.public_key_openssh
   }
 
   network_interface {
