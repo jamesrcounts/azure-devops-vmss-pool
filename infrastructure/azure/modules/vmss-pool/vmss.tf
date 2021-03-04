@@ -1,14 +1,14 @@
 resource "azurerm_linux_virtual_machine_scale_set" "azp_agents" {
   admin_username              = local.admin_username
   instances                   = 0
-  location                    = local.location
-  name                        = "vmss-${local.project}"
+  location                    = var.resource_group.location
+  name                        = "vmss-${var.project}"
   overprovision               = false
   platform_fault_domain_count = 1
-  resource_group_name         = local.resource_group_name
+  resource_group_name         = var.resource_group.name
   single_placement_group      = false
   sku                         = local.sku.name
-  tags                        = local.tags
+  tags                        = var.tags
   upgrade_mode                = "Manual"
 
   admin_ssh_key {
@@ -23,7 +23,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "azp_agents" {
     ip_configuration {
       name      = "internal"
       primary   = true
-      subnet_id = local.subnet_id
+      subnet_id = var.subnet_id
 
       public_ip_address {
         idle_timeout_in_minutes = 4

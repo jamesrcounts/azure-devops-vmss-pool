@@ -1,5 +1,6 @@
 locals {
-  sku = local.skus[var.sku]
+  admin_username = "azp"
+  sku            = local.skus[var.sku]
 
   // TODO is there an API to look this up?
   skus = {
