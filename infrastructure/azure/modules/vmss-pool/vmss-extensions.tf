@@ -10,11 +10,11 @@ resource "azurerm_virtual_machine_scale_set_extension" "oms_agent" {
   settings = jsonencode({
     "azureResourceId"           = azurerm_linux_virtual_machine_scale_set.azp_agents.id
     "stopOnMultipleConnections" = true
-    "workspaceId"               = local.workspace.workspace_id
+    "workspaceId"               = var.log_analytics_workspace.workspace_id
   })
 
   protected_settings = jsonencode({
-    "workspaceKey" = local.workspace.primary_shared_key
+    "workspaceKey" = var.log_analytics_workspace.primary_shared_key
   })
 }
 
