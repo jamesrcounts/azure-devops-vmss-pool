@@ -41,7 +41,7 @@ provider "azurerm" {
     }
 
     virtual_machine_scale_set {
-      roll_instances_when_required = true
+      roll_instances_when_required = false
     }
   }
 }
