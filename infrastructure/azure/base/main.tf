@@ -1,5 +1,6 @@
 locals {
-  project = "ado-vmss-pool"
+  project  = "ado-vmss-pool"
+  location = "centralus"
 
   tags = {
     project = local.project
