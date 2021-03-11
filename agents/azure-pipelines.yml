@@ -66,9 +66,6 @@ stages:
                 packer validate -syntax-only ${TEMPLATE_PATH}
 
                 # AZURE_SUBSCRIPTION=$(az account show --query 'id' -o tsv)
-                # IMAGE=$(basename ${TEMPLATE_PATH} ".json")
-
-                # echo "Build ${IMAGE} VM"
                 # packer build    \
                 #                 -var "client_id=${servicePrincipalId}" \
                 #                 -var "client_secret=${servicePrincipalKey}" \
@@ -78,5 +75,11 @@ stages:
                 #                 -var "sig_image_version=$(Build.BuildNumber)" \
                 #                 -var "subscription_id=${AZURE_SUBSCRIPTION}" \
                 #                 -var "tenant_id=${tenantId}" \
-                #                 ${TEMPLATE_PATH} 
+                #                 ${TEMPLATE_PATH}
+
+                packer build \
+                  -var 'managed_image_name=agent' \
+                  -var 'managed_image_resource_group_name=${AZURE_RESOURCE_GROUP_IMAGES}' \
+                  -var 'location=${AZURE_LOCATION}' \
+                  ${TEMPLATE_PATH}
               addSpnToEnvironment: true
