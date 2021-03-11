@@ -81,6 +81,6 @@ stages:
                   -var "managed_image_name=agent" \
                   -var "managed_image_resource_group_name=${AZURE_RESOURCE_GROUP_IMAGES}" \
                   -var "location=${AZURE_LOCATION}" \
-                  -var "sig_image_version=$(Build.BuildNumber)"
+                  -var "sig_image_version=$(Build.BuildNumber)" \
                   ${TEMPLATE_PATH}
               addSpnToEnvironment: true
