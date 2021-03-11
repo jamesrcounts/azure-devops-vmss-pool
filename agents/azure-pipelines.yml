@@ -45,4 +45,36 @@ stages:
                 for SCRIPT in "${SCRIPTS[@]}"
                 do
                   sudo -E sh -c "${INSTALLER_FOLDER}/${SCRIPT}"
-                done  
+                done
+
+          - task: AzureCLI@2
+            displayName: 'Build Agent Image'
+            inputs:
+              azureSubscription: 'Azure'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                set -euo pipefail
+                
+                echo "Show Packer Version"
+                packer --version
+
+                # packer validate -syntax-only ${TEMPLATE_PATH}
+
+                # AZURE_SUBSCRIPTION=$(az account show --query 'id' -o tsv)
+                # IMAGE=$(basename ${TEMPLATE_PATH} ".json")
+
+                # echo "Build ${IMAGE} VM"
+                # packer build    \
+                #                 -var "client_id=${servicePrincipalId}" \
+                #                 -var "client_secret=${servicePrincipalKey}" \
+                #                 -var "location=${AZURE_LOCATION}" \
+                #                 -var "managed_image_name=bootstrap-$(Build.BuildNumber)" \
+                #                 -var "managed_image_resource_group_name=${AZURE_RESOURCE_GROUP}" \
+                #                 -var "sig_image_version=$(Build.BuildNumber)" \
+                #                 -var "subscription_id=${AZURE_SUBSCRIPTION}" \
+                #                 -var "tenant_id=${tenantId}" \
+                #                 ${TEMPLATE_PATH} 
+              addSpnToEnvironment: true
+            env:
+              TEMPLATE_PATH: "./infrastructure/images/bootstrap/ubuntu1804.bootstrapper.json"
