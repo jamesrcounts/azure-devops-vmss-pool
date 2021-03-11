@@ -21,6 +21,8 @@ stages:
         displayName: 'Generate Agent Image'
         timeoutInMinutes: 600
         cancelTimeoutInMinutes: 30
+        variables:
+          agents_folder: './agents'
         steps:
           - checkout: self
             fetchDepth: 1
@@ -32,7 +34,7 @@ stages:
               script: |
                 set -euo pipefail
                 
-                INSTALLER_FOLDER="./agents/bootstrap/scripts/installers"
+                INSTALLER_FOLDER="${AGENTS_FOLDER}/bootstrap/scripts/installers"
                 chmod -Rv 777 "${INSTALLER_FOLDER}/"
                 
                 declare -a SCRIPTS=(
@@ -59,7 +61,9 @@ stages:
                 echo "Show Packer Version"
                 packer --version
 
-                # packer validate -syntax-only ${TEMPLATE_PATH}
+                
+                TEMPLATE_PATH="${AGENTS_FOLDER}/agent.json"
+                packer validate -syntax-only ${TEMPLATE_PATH}
 
                 # AZURE_SUBSCRIPTION=$(az account show --query 'id' -o tsv)
                 # IMAGE=$(basename ${TEMPLATE_PATH} ".json")
@@ -76,5 +80,3 @@ stages:
                 #                 -var "tenant_id=${tenantId}" \
                 #                 ${TEMPLATE_PATH} 
               addSpnToEnvironment: true
-            env:
-              TEMPLATE_PATH: "./infrastructure/images/bootstrap/ubuntu1804.bootstrapper.json"

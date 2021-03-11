@@ -1,0 +1,42 @@
+{
+  "variables": {
+    "location": "{{env `ARM_RESOURCE_LOCATION`}}",
+    "managed_image_name": "{{env `MANAGED_IMAGE_NAME`}}",
+    "managed_image_resource_group_name": "{{env `ARM_RESOURCE_GROUP`}}",
+    "private_virtual_network_with_public_ip": "{{env `PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP`}}",
+    "sig_image_version": "{{env `SIG_IMAGE_VERSION`}}",
+    "sig_name": "{{env `SIG_NAME`}}",
+    "virtual_network_name": "{{env `VNET_NAME`}}",
+    "virtual_network_resource_group_name": "{{env `VNET_RESOURCE_GROUP`}}",
+    "virtual_network_subnet_name": "{{env `VNET_SUBNET`}}",
+    "vm_size": "Standard_D4ds_v4"
+  },
+  "builders": [
+    {
+      "image_offer": "UbuntuServer",
+      "image_publisher": "Canonical",
+      "image_sku": "18_04-lts-gen2",
+      "location": "{{user `location`}}",
+      "managed_image_name": "{{user `managed_image_name`}}",
+      "managed_image_resource_group_name": "{{user `managed_image_resource_group_name`}}",
+      "os_disk_size_gb": "100",
+      "os_type": "Linux",
+      "private_virtual_network_with_public_ip": "{{user `private_virtual_network_with_public_ip`}}",
+      "type": "azure-arm",
+      "virtual_network_name": "{{user `virtual_network_name`}}",
+      "virtual_network_resource_group_name": "{{user `virtual_network_resource_group_name`}}",
+      "virtual_network_subnet_name": "{{user `virtual_network_subnet_name`}}",
+      "vm_size": "{{user `vm_size`}}",
+      "shared_image_gallery_destination": {
+        "gallery_name": "{{user `sig_name`}}",
+        "image_name": "bootstrap",
+        "image_version": "{{user `sig_image_version`}}",
+        "resource_group": "{{user `managed_image_resource_group_name`}}",
+        "subscription": "{{user `subscription_id`}}",
+        "replication_regions": [
+          "{{user `location`}}"
+        ]
+      }
+    }
+  ]
+}
