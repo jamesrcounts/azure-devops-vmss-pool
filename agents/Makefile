@@ -8,7 +8,8 @@ syntax:
 
 validate: fmt syntax
 	packer validate \
-		-var 'managed_image_name=fake' \
-		-var 'managed_image_resource_group_name=fake-rg' \
-		-var 'location=centralus' \
+		-var "managed_image_name=fake" \
+		-var "managed_image_resource_group_name=fake-rg" \
+		-var "location=centralus" \
+		-var "sig_image_version=0.0.1" \
 		./agent.json

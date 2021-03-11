@@ -4,7 +4,7 @@
     "managed_image_name": "{{env `MANAGED_IMAGE_NAME`}}",
     "managed_image_resource_group_name": "{{env `ARM_RESOURCE_GROUP`}}",
     "private_virtual_network_with_public_ip": "{{env `PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP`}}",
-    "sig_image_version": "{{env `SIG_IMAGE_VERSION`}}",
+    "sig_image_version": null,
     "sig_name": "{{env `SIG_NAME`}}",
     "virtual_network_name": "{{env `VNET_NAME`}}",
     "virtual_network_resource_group_name": "{{env `VNET_RESOURCE_GROUP`}}",

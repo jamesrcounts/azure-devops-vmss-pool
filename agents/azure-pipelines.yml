@@ -78,8 +78,9 @@ stages:
                 #                 ${TEMPLATE_PATH}
                 set -x
                 packer build \
-                  -var 'managed_image_name=agent' \
-                  -var 'managed_image_resource_group_name=${AZURE_RESOURCE_GROUP_IMAGES}' \
-                  -var 'location=${AZURE_LOCATION}' \
+                  -var "managed_image_name=agent" \
+                  -var "managed_image_resource_group_name=${AZURE_RESOURCE_GROUP_IMAGES}" \
+                  -var "location=${AZURE_LOCATION}" \
+                  -var "sig_image_version=$(Build.BuildNumber)"
                   ${TEMPLATE_PATH}
               addSpnToEnvironment: true
