@@ -1,19 +1,48 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+name: 0.0.$(Rev:r)
 
 trigger:
-  - main
+  batch: true
+  branches:
+    include:
+      - main
 
-pool:
-  vmImage: ubuntu-latest
+variables:
+  - group: ado-vmss-pool
+  - name: DEBIAN_FRONTEND
+    value: noninteractive
+  - name: TF_IN_AUTOMATION
+    value: true
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+  - stage: 'bootstrap'
+    pool: 'ado-vmss-pool-bootstrap'
+    jobs:
+      - job: 
+        displayName: 'Generate Agent Image'
+        timeoutInMinutes: 600
+        cancelTimeoutInMinutes: 30
+        steps:
+          - checkout: self
+            fetchDepth: 1
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+          - task: Bash@3
+            displayName: 'Install Tools'
+            inputs:
+              targetType: 'inline'
+              script: |
+                set -euo pipefail
+                
+                INSTALLER_FOLDER="./agents/bootstrap/scripts/installers"
+                chmod -Rv 777 "${INSTALLER_FOLDER}/"
+                
+                declare -a SCRIPTS=(
+                                    "azure-cli.sh"
+                                    "basic.sh"
+                                    "packer.sh"
+                                    "terraform.sh"
+                                    )
+                
+                for SCRIPT in "${SCRIPTS[@]}"
+                do
+                  sudo -E sh -c "${INSTALLER_FOLDER}/${SCRIPT}"
+                done  
