@@ -65,7 +65,8 @@ stages:
                 TEMPLATE_PATH="${AGENTS_FOLDER}/agent.json"
                 packer validate -syntax-only ${TEMPLATE_PATH}
 
-                # AZURE_SUBSCRIPTION=$(az account show --query 'id' -o tsv)
+                AZURE_SUBSCRIPTION=$(az account show --query 'id' -o tsv)
+                
                 # packer build    \
                 #                 -var "client_id=${servicePrincipalId}" \
                 #                 -var "client_secret=${servicePrincipalKey}" \
