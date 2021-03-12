@@ -76,11 +76,15 @@ stages:
                 #                 -var "subscription_id=${AZURE_SUBSCRIPTION}" \
                 #                 -var "tenant_id=${tenantId}" \
                 #                 ${TEMPLATE_PATH}
-                set -x
+
                 packer build \
+                  -var "client_id=${servicePrincipalId}" \
+                  -var "client_secret=${servicePrincipalKey}" \                  
                   -var "managed_image_name=agent" \
                   -var "managed_image_resource_group_name=${AZURE_RESOURCE_GROUP_IMAGES}" \
                   -var "location=${AZURE_LOCATION}" \
                   -var "sig_image_version=$(Build.BuildNumber)" \
+                  -var "subscription_id=${AZURE_SUBSCRIPTION}" \
+                  -var "tenant_id=${tenantId}" \
                   ${TEMPLATE_PATH}
               addSpnToEnvironment: true
