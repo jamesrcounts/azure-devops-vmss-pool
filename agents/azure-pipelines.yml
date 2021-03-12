@@ -92,7 +92,7 @@ stages:
                 AZURE_SUBSCRIPTION=$(az account show --query 'id' -o tsv)
 
                   az image delete \
-                    --name custom \
+                    --name agent \
                     --resource-group ${AZURE_RESOURCE_GROUP_IMAGES} \
                     --subscription ${AZURE_SUBSCRIPTION}
               addSpnToEnvironment: false
