@@ -50,7 +50,7 @@ stages:
                 done
 
           - task: AzureCLI@2
-            displayName: 'Build Agent Image'
+            displayName: 'Build Agent Image Version'
             inputs:
               azureSubscription: 'Azure'
               scriptType: 'bash'
@@ -79,3 +79,20 @@ stages:
                   -var "tenant_id=${tenantId}" \
                   ${TEMPLATE_PATH}
               addSpnToEnvironment: true
+
+          - task: AzureCLI@2
+            displayName: 'Cleanup'
+            inputs:
+              azureSubscription: 'Azure'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                set -euo pipefail
+
+                AZURE_SUBSCRIPTION=$(az account show --query 'id' -o tsv)
+
+                  az image delete \
+                    --name custom \
+                    --resource-group ${AZURE_RESOURCE_GROUP_IMAGES} \
+                    --subscription ${AZURE_SUBSCRIPTION}
+              addSpnToEnvironment: false
