@@ -57,28 +57,17 @@ stages:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 set -euo pipefail
-                
+
+                TEMPLATE_PATH="${AGENTS_FOLDER}/agent.json"
+                AZURE_SUBSCRIPTION=$(az account show --query 'id' -o tsv)
+
                 echo "Show Packer Version"
                 packer --version
 
-                
-                TEMPLATE_PATH="${AGENTS_FOLDER}/agent.json"
+                echo "Sanity Check"
                 packer validate -syntax-only ${TEMPLATE_PATH}
-
-                AZURE_SUBSCRIPTION=$(az account show --query 'id' -o tsv)
                 
-                # packer build    \
-                #                 -var "client_id=${servicePrincipalId}" \
-                #                 -var "client_secret=${servicePrincipalKey}" \
-                #                 -var "location=${AZURE_LOCATION}" \
-                #                 -var "managed_image_name=bootstrap-$(Build.BuildNumber)" \
-                #                 -var "managed_image_resource_group_name=${AZURE_RESOURCE_GROUP}" \
-                #                 -var "sig_image_version=$(Build.BuildNumber)" \
-                #                 -var "subscription_id=${AZURE_SUBSCRIPTION}" \
-                #                 -var "tenant_id=${tenantId}" \
-                #                 ${TEMPLATE_PATH}
-
-                set -x
+                echo "Build VM Image"
                 packer build \
                   -var "client_id=${servicePrincipalId}" \
                   -var "client_secret=${servicePrincipalKey}" \
