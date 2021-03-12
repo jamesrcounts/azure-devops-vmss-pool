@@ -40,7 +40,7 @@
       "vm_size": "{{user `vm_size`}}",
       "shared_image_gallery_destination": {
         "gallery_name": "{{user `sig_name`}}",
-        "image_name": "bootstrap",
+        "image_name": "custom",
         "image_version": "{{user `sig_image_version`}}",
         "resource_group": "{{user `managed_image_resource_group_name`}}",
         "subscription": "{{user `subscription_id`}}",
