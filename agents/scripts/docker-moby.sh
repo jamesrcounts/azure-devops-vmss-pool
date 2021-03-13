@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 ################################################################################
 ##  File:  docker-moby.sh
 ##  Desc:  Installs docker onto the image
