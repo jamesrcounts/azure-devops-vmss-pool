@@ -18,6 +18,10 @@ source "azure-arm" "agent" {
   vm_size                                       = "${var.vm_size}"
   shared_gallery_image_version_end_of_life_date = timeadd(timestamp(), "240h")
 
+  azure_tags = {
+    project = "ado-vmss-pool"
+  }
+
   shared_image_gallery_destination {
     gallery_name        = "${var.sig_name}"
     image_name          = "custom"
