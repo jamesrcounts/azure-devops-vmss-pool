@@ -1,5 +1,5 @@
 locals {
-  bootstrap_scripts = "${path.root}/bootstrap/scripts/installers"
+  bootstrap_scripts = "${path.root}/scripts/bootstrap"
 }
 
 build {
@@ -17,6 +17,8 @@ build {
   }
 
   provisioner "shell" {
+    inline_shebang  = "/bin/sh -x"
+    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
     inline = [
       "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
     ]
