@@ -15,7 +15,7 @@ source "azure-arm" "agent" {
   virtual_network_name                          = "${var.virtual_network_name}"
   virtual_network_resource_group_name           = "${var.virtual_network_resource_group_name}"
   virtual_network_subnet_name                   = "${var.virtual_network_subnet_name}"
-  vm_size                                       = "${var.vm_size}"
+  vm_size                                       = "Standard_D4ds_v4"
   shared_gallery_image_version_end_of_life_date = timeadd(timestamp(), "240h")
 
   azure_tags = {

@@ -8,11 +8,15 @@ syntax:
 
 validate: fmt syntax
 	packer validate \
+		-var "client_id=fake" \
+		-var "client_secret=fake" \
+		-var "location=centralus" \
 		-var "managed_image_name=fake" \
 		-var "managed_image_resource_group_name=fake-rg" \
-		-var "location=centralus" \
 		-var "sig_image_version=0.0.1" \
-		-var "virtual_network_subnet_name=subnet" \
-		-var "virtual_network_resource_group_name=rg-vnet" \
+		-var "subscription_id=fake" \
+		-var "tenant_id=fake" \
 		-var "virtual_network_name=vnet" \
+		-var "virtual_network_resource_group_name=rg-vnet" \
+		-var "virtual_network_subnet_name=subnet" \
 		.
