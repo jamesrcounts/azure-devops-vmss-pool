@@ -1,5 +1,5 @@
 locals {
-  bootstrap_scripts = "./bootstrap/scripts/installers"
+  bootstrap_scripts = "${path.root}/bootstrap/scripts/installers"
 }
 
 build {
