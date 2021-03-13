@@ -1,5 +1,6 @@
 locals {
-  bootstrap_scripts = "${path.root}/scripts/bootstrap"
+  scripts           = "${path.root}/scripts"
+  bootstrap_scripts = "${local.scripts}/bootstrap"
 }
 
 build {
@@ -13,6 +14,14 @@ build {
       "${local.bootstrap_scripts}/basic.sh",
       "${local.bootstrap_scripts}/packer.sh",
       "${local.bootstrap_scripts}/terraform.sh"
+    ]
+  }
+
+  provisioner "shell" {
+    environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
+    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    scripts = [
+      "${local.scripts}/docker-moby.sh"
     ]
   }
 
