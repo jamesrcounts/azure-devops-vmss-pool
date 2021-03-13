@@ -24,8 +24,7 @@ variable "sig_image_version" {
 }
 
 variable "sig_name" {
-  type    = string
-  default = "${env("SIG_NAME")}"
+  type = string
 }
 
 variable "subscription_id" {

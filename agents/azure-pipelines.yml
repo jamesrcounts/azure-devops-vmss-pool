@@ -76,6 +76,7 @@ stages:
                   -var "managed_image_resource_group_name=${AZURE_RESOURCE_GROUP_IMAGES}" \
                   -var "location=${AZURE_LOCATION}" \
                   -var "sig_image_version=$(Build.BuildNumber)" \
+                  -var "sig_name=${SIG_NAME}" \
                   -var "subscription_id=${AZURE_SUBSCRIPTION}" \
                   -var "tenant_id=${tenantId}" \
                   -var "virtual_network_subnet_name=${PACKER_SUBNET_NAME}" \
