@@ -35,7 +35,7 @@ stages:
               script: |
                 set -euo pipefail
                 
-                INSTALLER_FOLDER="${AGENTS_FOLDER}/bootstrap/scripts/installers"
+                INSTALLER_FOLDER="${AGENTS_FOLDER}/scripts/bootstrap"
                 chmod -Rv 777 "${INSTALLER_FOLDER}/"
                 
                 declare -a SCRIPTS=(
