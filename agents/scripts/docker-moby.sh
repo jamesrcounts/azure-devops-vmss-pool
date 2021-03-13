@@ -4,9 +4,6 @@
 ##  Desc:  Installs docker onto the image
 ################################################################################
 
-# Source the helpers for use with the script
-source $HELPER_SCRIPTS/install.sh
-
 # Check to see if docker is already installed
 docker_package=moby
 echo "Determing if Docker ($docker_package) is installed"
