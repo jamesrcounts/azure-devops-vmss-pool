@@ -32,6 +32,3 @@ source "azure-arm" "agent" {
   }
 }
 
-build {
-  sources = ["source.azure-arm.agent"]
-}
