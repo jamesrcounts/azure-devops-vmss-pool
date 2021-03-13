@@ -5,6 +5,7 @@ trigger:
   branches:
     include:
       - main
+      - bootstrap-pipeline
 
 variables:
   - group: ado-vmss-pool
@@ -77,6 +78,9 @@ stages:
                   -var "sig_image_version=$(Build.BuildNumber)" \
                   -var "subscription_id=${AZURE_SUBSCRIPTION}" \
                   -var "tenant_id=${tenantId}" \
+                  -var "virtual_network_subnet_name=${PACKER_SUBNET_NAME}" \
+                  -var "virtual_network_resource_group_name=${BUILD_AGENT_VNET_RESOURCE_GROUP}" \
+                  -var "virtual_network_name=${BUILD_AGENT_VNET_NAME}" \
                   ${TEMPLATE_PATH}
               addSpnToEnvironment: true
 

@@ -25,7 +25,7 @@ resource "azuredevops_variable_group" "variablegroup" {
   }
 
   variable {
-    name  = "BUILD_AGENT_SUBNET_NAME"
+    name  = "PACKER_SUBNET_NAME"
     value = data.azurerm_key_vault_secret.secrets["packer-subnet-name"].value
   }
 

@@ -44,18 +44,15 @@ variable "tenant_id" {
 }
 
 variable "virtual_network_name" {
-  type    = string
-  default = "${env("VNET_NAME")}"
+  type = string
 }
 
 variable "virtual_network_resource_group_name" {
-  type    = string
-  default = "${env("VNET_RESOURCE_GROUP")}"
+  type = string
 }
 
 variable "virtual_network_subnet_name" {
-  type    = string
-  default = "${env("VNET_SUBNET")}"
+  type = string
 }
 
 variable "vm_size" {
