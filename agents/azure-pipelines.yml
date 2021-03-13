@@ -58,7 +58,7 @@ stages:
               inlineScript: |
                 set -euo pipefail
 
-                TEMPLATE_PATH="${AGENTS_FOLDER}/agent.json"
+                TEMPLATE_PATH=${AGENTS_FOLDER}
                 AZURE_SUBSCRIPTION=$(az account show --query 'id' -o tsv)
 
                 echo "Show Packer Version"

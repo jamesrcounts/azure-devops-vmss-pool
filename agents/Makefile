@@ -1,10 +1,10 @@
 default: validate
 
 fmt:
-	cat ./agent.json | jq -rM "." > ./agent.pretty && mv -fb agent.pretty agent.json
+	packer fmt .
 
 syntax:
-	packer validate -syntax-only ./agent.json
+	packer validate -syntax-only .
 
 validate: fmt syntax
 	packer validate \
@@ -12,4 +12,4 @@ validate: fmt syntax
 		-var "managed_image_resource_group_name=fake-rg" \
 		-var "location=centralus" \
 		-var "sig_image_version=0.0.1" \
-		./agent.json
+		.
