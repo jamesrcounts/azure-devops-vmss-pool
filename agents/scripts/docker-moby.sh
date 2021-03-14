@@ -1,8 +1,9 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 ################################################################################
 ##  File:  docker-moby.sh
 ##  Desc:  Installs docker onto the image
 ################################################################################
+set -euo pipefail
 
 # Check to see if docker is already installed
 docker_package=moby
@@ -43,5 +44,3 @@ done
 # image. Logout _should_ return a zero exit code even if no credentials were
 # stored from earlier.
 docker logout
-
-invoke_tests "Tools" "Docker"
