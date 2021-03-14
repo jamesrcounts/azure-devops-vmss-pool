@@ -29,6 +29,7 @@ docker info
 # Pull images
 declare -a images=(
     "mcr.microsoft.com/dotnet/runtime:5.0"
+    "mcr.microsoft.com/dotnet/sdk:5.0"
     )
 for image in $images; do
     docker pull "$image"

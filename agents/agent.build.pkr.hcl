@@ -23,6 +23,7 @@ build {
     scripts = [
       "${local.scripts}/repos.sh",
       "${local.scripts}/docker-moby.sh"
+      "${local.scripts}/dotnetcore-sdk.sh"
     ]
   }
 
