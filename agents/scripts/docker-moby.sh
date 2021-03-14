@@ -32,7 +32,9 @@ if [ "${DOCKERHUB_LOGIN}" ] && [ "${DOCKERHUB_PASSWORD}" ]; then
 fi
 
 # Pull images
-images=$(get_toolset_value '.docker.images[]')
+delcare -a images=(
+    "mcr.microsoft.com/dotnet/runtime:5.0"
+    )
 for image in $images; do
     docker pull "$image"
 done
