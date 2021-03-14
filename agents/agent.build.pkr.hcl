@@ -22,7 +22,7 @@ build {
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts = [
       "${local.scripts}/repos.sh",
-      "${local.scripts}/docker-moby.sh"
+      "${local.scripts}/docker-moby.sh",
       "${local.scripts}/dotnetcore-sdk.sh"
     ]
   }
