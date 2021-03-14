@@ -32,7 +32,7 @@ if [ "${DOCKERHUB_LOGIN}" ] && [ "${DOCKERHUB_PASSWORD}" ]; then
 fi
 
 # Pull images
-delcare -a images=(
+declare -a images=(
     "mcr.microsoft.com/dotnet/runtime:5.0"
     )
 for image in $images; do
