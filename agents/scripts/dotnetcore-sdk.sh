@@ -3,14 +3,11 @@
 ##  File:  dotnetcore-sdk.sh
 ##  Desc:  Installs .NET Core SDK
 ################################################################################
-
-source $HELPER_SCRIPTS/etc-environment.sh
-source $HELPER_SCRIPTS/install.sh
-source $HELPER_SCRIPTS/os.sh
+set -euo pipefail
 
 # Ubuntu 20 doesn't support EOL versions
-LATEST_DOTNET_PACKAGES=$(get_toolset_value '.dotnet.aptPackages[]')
-DOTNET_VERSIONS=$(get_toolset_value '.dotnet.versions[]')
+declare -a LATEST_DOTNET_PACKAGES
+declare -a DOTNET_VERSIONS
 
 mksamples()
 {
