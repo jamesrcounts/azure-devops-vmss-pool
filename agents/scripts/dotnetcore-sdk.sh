@@ -41,7 +41,7 @@ done
 sdks=()
 for version in ${DOTNET_VERSIONS[@]}; do
     release_url="https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/${version}/releases.json"
-    download_with_retries "${release_url}" "." "${version}.json"
+    curl "${release_url}" -4 -sL -o "./${version}.json"
     releases=$(cat "./${version}.json")
     sdks=("${sdks[@]}" $(echo "${releases}" | jq '.releases[]' | jq '.sdk.version'))
     sdks=("${sdks[@]}" $(echo "${releases}" | jq '.releases[]' | jq '.sdks[]?' | jq '.version'))
