@@ -3,7 +3,7 @@
 ##  File:  dotnetcore-sdk.sh
 ##  Desc:  Installs .NET Core SDK
 ################################################################################
-set -euo pipefail
+set -euox pipefail
 
 # Ubuntu 20 doesn't support EOL versions
 declare -a LATEST_DOTNET_PACKAGES
