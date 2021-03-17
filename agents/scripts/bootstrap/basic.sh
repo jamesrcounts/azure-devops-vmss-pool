@@ -6,6 +6,7 @@
 declare -a cmd_packages=(
     "jq"
     "unzip"
+    "parallel"
 )
 
 for package in "${cmd_packages[@]}"; do
