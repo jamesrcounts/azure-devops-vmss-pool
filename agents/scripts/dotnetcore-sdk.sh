@@ -62,12 +62,11 @@ extract_dotnet_sdk() {
 }
 
 # Download/install additional SDKs in parallel
-export -f download_with_retries
 export -f extract_dotnet_sdk
 
 parallel --jobs 0 --halt soon,fail=1 \
     'url="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{}/dotnet-sdk-{}-linux-x64.tar.gz"; \
-    download_with_retries $url' ::: "${sortedSdks[@]}"
+    curl $url -4 -sL -o ./${url##*/}' ::: "${sortedSdks[@]}"
 
 find . -name "*.tar.gz" | parallel --halt soon,fail=1 'extract_dotnet_sdk {}'
 
@@ -87,5 +86,3 @@ setEtcEnvironmentVariable DOTNET_SKIP_FIRST_TIME_EXPERIENCE 1
 setEtcEnvironmentVariable DOTNET_NOLOGO 1
 setEtcEnvironmentVariable DOTNET_MULTILEVEL_LOOKUP 0
 echo 'export PATH=$PATH:$HOME/.dotnet/tools' | tee -a /etc/profile.d/env_vars.sh
-
-invoke_tests "DotnetSDK"
