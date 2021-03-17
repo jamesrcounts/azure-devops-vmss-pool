@@ -38,7 +38,9 @@ for latest_package in ${LATEST_DOTNET_PACKAGES[@]}; do
 done
 
 # Get list of all released SDKs from channels which are not end-of-life or preview
-sdks=()
+declare -a sdks=(
+    "5.0"
+)
 for version in ${DOTNET_VERSIONS[@]}; do
     release_url="https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/${version}/releases.json"
     curl "${release_url}" -4 -sL -o "./${version}.json"
