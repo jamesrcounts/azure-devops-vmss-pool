@@ -6,7 +6,7 @@
 set -euox pipefail
 
 # source $HELPER_SCRIPTS/etc-environment.sh
-# source $HELPER_SCRIPTS/install.sh
+source $HELPER_SCRIPTS/install.sh
 # source $HELPER_SCRIPTS/os.sh
 
 # Ubuntu 20 doesn't support EOL versions

@@ -1,6 +1,7 @@
 locals {
   scripts           = "${path.root}/scripts"
   bootstrap_scripts = "${local.scripts}/bootstrap"
+  helpers           = "${local.scripts}/helpers"
 }
 
 build {
@@ -18,8 +19,11 @@ build {
   }
 
   provisioner "shell" {
-    environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
-    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "HELPER_SCRIPTS=${local.helpers}"
+    ]
+    execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts = [
       "${local.scripts}/repos.sh",
       "${local.scripts}/docker-moby.sh",
