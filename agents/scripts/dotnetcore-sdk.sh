@@ -5,9 +5,13 @@
 ################################################################################
 set -euox pipefail
 
+# source $HELPER_SCRIPTS/etc-environment.sh
+# source $HELPER_SCRIPTS/install.sh
+# source $HELPER_SCRIPTS/os.sh
+
 # Ubuntu 20 doesn't support EOL versions
-declare -a LATEST_DOTNET_PACKAGES
-declare -a DOTNET_VERSIONS
+declare -a LATEST_DOTNET_PACKAGES=("dotnet-sdk-5.0")
+declare -a DOTNET_VERSIONS=("5.0")
 
 mksamples()
 {
@@ -28,22 +32,14 @@ mksamples()
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 for latest_package in ${LATEST_DOTNET_PACKAGES[@]}; do
-    echo "Determing if .NET Core ($latest_package) is installed"
-    if ! IsPackageInstalled $latest_package; then
-        echo "Could not find .NET Core ($latest_package), installing..."
-        apt-get install $latest_package -y
-    else
-        echo ".NET Core ($latest_package) is already installed"
-    fi
+    apt-get install $latest_package -y
 done
 
 # Get list of all released SDKs from channels which are not end-of-life or preview
-declare -a sdks=(
-    "5.0"
-)
+sdks=()
 for version in ${DOTNET_VERSIONS[@]}; do
     release_url="https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/${version}/releases.json"
-    curl "${release_url}" -4 -sL -o "./${version}.json"
+    download_with_retries "${release_url}" "." "${version}.json"
     releases=$(cat "./${version}.json")
     sdks=("${sdks[@]}" $(echo "${releases}" | jq '.releases[]' | jq '.sdk.version'))
     sdks=("${sdks[@]}" $(echo "${releases}" | jq '.releases[]' | jq '.sdks[]?' | jq '.version'))
@@ -64,11 +60,12 @@ extract_dotnet_sdk() {
 }
 
 # Download/install additional SDKs in parallel
+export -f download_with_retries
 export -f extract_dotnet_sdk
 
 parallel --jobs 0 --halt soon,fail=1 \
     'url="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{}/dotnet-sdk-{}-linux-x64.tar.gz"; \
-    curl $url -4 -sL -o ./${url##*/}' ::: "${sortedSdks[@]}"
+    download_with_retries $url' ::: "${sortedSdks[@]}"
 
 find . -name "*.tar.gz" | parallel --halt soon,fail=1 'extract_dotnet_sdk {}'
 
@@ -88,3 +85,5 @@ setEtcEnvironmentVariable DOTNET_SKIP_FIRST_TIME_EXPERIENCE 1
 setEtcEnvironmentVariable DOTNET_NOLOGO 1
 setEtcEnvironmentVariable DOTNET_MULTILEVEL_LOOKUP 0
 echo 'export PATH=$PATH:$HOME/.dotnet/tools' | tee -a /etc/profile.d/env_vars.sh
+
+invoke_tests "DotnetSDK"
