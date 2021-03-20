@@ -1,5 +1,7 @@
 locals {
   scripts           = "${path.root}/scripts"
+  remote_scripts    = "/imagegeneration"
+  remote_helpers    = "${local.remote_scripts}/helpers"
   bootstrap_scripts = "${local.scripts}/bootstrap"
   helpers           = "${local.scripts}/helpers"
 }
@@ -18,15 +20,23 @@ build {
     ]
   }
 
+  provisioner "shell" {
+    execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    inline = [
+      "mkdir ${local.remote_scripts}",
+      "chmod 777 ${local.remote_scripts}"
+    ]
+  }
+
   provisioner "file" {
     source      = local.helpers
-    destination = local.helpers
+    destination = local.remote_helpers
   }
 
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
-      "HELPER_SCRIPTS=${local.helpers}"
+      "HELPER_SCRIPTS=${local.remote_helpers}"
     ]
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts = [
