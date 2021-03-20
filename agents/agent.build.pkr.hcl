@@ -18,6 +18,11 @@ build {
     ]
   }
 
+  provisioner "file" {
+    source      = local.helpers
+    destination = local.helpers
+  }
+
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
