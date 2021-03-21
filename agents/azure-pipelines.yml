@@ -1,19 +1,103 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+name: 0.0.$(Rev:r)
 
 trigger:
-  - main
+  batch: true
+  branches:
+    include:
+      - main
+      - bootstrap-pipeline
 
-pool:
-  vmImage: ubuntu-latest
+variables:
+  - group: ado-vmss-pool
+  - name: DEBIAN_FRONTEND
+    value: noninteractive
+  - name: TF_IN_AUTOMATION
+    value: true
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+  - stage: 'bootstrap'
+    pool: 'ado-vmss-pool-bootstrap'
+    jobs:
+      - job: 
+        displayName: 'Generate Agent Image'
+        timeoutInMinutes: 600
+        cancelTimeoutInMinutes: 30
+        variables:
+          agents_folder: './agents'
+        steps:
+          - checkout: self
+            fetchDepth: 1
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+          - task: Bash@3
+            displayName: 'Install Tools'
+            inputs:
+              targetType: 'inline'
+              script: |
+                set -euo pipefail
+                
+                INSTALLER_FOLDER="${AGENTS_FOLDER}/scripts/bootstrap"
+                chmod -Rv 777 "${INSTALLER_FOLDER}/"
+                
+                declare -a SCRIPTS=(
+                                    "azure-cli.sh"
+                                    "basic.sh"
+                                    "packer.sh"
+                                    "terraform.sh"
+                                    )
+                
+                for SCRIPT in "${SCRIPTS[@]}"
+                do
+                  sudo -E sh -c "${INSTALLER_FOLDER}/${SCRIPT}"
+                done
+
+          - task: AzureCLI@2
+            displayName: 'Build Agent Image Version'
+            inputs:
+              azureSubscription: 'Azure'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                set -euo pipefail
+
+                TEMPLATE_PATH=${AGENTS_FOLDER}
+                AZURE_SUBSCRIPTION=$(az account show --query 'id' -o tsv)
+
+                echo "Show Packer Version"
+                packer --version
+
+                echo "Sanity Check"
+                packer validate -syntax-only ${TEMPLATE_PATH}
+                
+                echo "Build VM Image"
+                packer build \
+                  -var "client_id=${servicePrincipalId}" \
+                  -var "client_secret=${servicePrincipalKey}" \
+                  -var "managed_image_name=agent" \
+                  -var "managed_image_resource_group_name=${AZURE_RESOURCE_GROUP_IMAGES}" \
+                  -var "location=${AZURE_LOCATION}" \
+                  -var "sig_image_version=$(Build.BuildNumber)" \
+                  -var "sig_name=${SIG_NAME}" \
+                  -var "subscription_id=${AZURE_SUBSCRIPTION}" \
+                  -var "tenant_id=${tenantId}" \
+                  -var "virtual_network_subnet_name=${PACKER_SUBNET_NAME}" \
+                  -var "virtual_network_resource_group_name=${BUILD_AGENT_VNET_RESOURCE_GROUP}" \
+                  -var "virtual_network_name=${BUILD_AGENT_VNET_NAME}" \
+                  ${TEMPLATE_PATH}
+              addSpnToEnvironment: true
+
+          - task: AzureCLI@2
+            displayName: 'Cleanup'
+            inputs:
+              azureSubscription: 'Azure'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                set -euo pipefail
+
+                AZURE_SUBSCRIPTION=$(az account show --query 'id' -o tsv)
+
+                  az image delete \
+                    --name agent \
+                    --resource-group ${AZURE_RESOURCE_GROUP_IMAGES} \
+                    --subscription ${AZURE_SUBSCRIPTION}
+              addSpnToEnvironment: false
