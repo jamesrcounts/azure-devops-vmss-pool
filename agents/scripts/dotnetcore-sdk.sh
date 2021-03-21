@@ -4,7 +4,7 @@
 ##  Desc:  Installs .NET Core SDK
 ################################################################################
 
-# source $HELPER_SCRIPTS/etc-environment.sh
+source $HELPER_SCRIPTS/etc-environment.sh
 source $HELPER_SCRIPTS/install.sh
 # source $HELPER_SCRIPTS/os.sh
 
