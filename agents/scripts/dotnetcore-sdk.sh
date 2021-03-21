@@ -85,4 +85,4 @@ setEtcEnvironmentVariable DOTNET_NOLOGO 1
 setEtcEnvironmentVariable DOTNET_MULTILEVEL_LOOKUP 0
 echo 'export PATH=$PATH:$HOME/.dotnet/tools' | tee -a /etc/profile.d/env_vars.sh
 
-invoke_tests "DotnetSDK"
+# invoke_tests "DotnetSDK"
