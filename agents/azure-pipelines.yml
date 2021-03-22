@@ -85,8 +85,22 @@ stages:
                   ${TEMPLATE_PATH}
               addSpnToEnvironment: true
 
+          - task: Bash@3
+            displayName: 'Terraform Init'
+            inputs:
+              targetType: 'inline'
+              script: |
+                set -euo pipefail
+                
+                terraform init -input=false
+                terraform validate
+                terraform -v
+              failOnStderr: true
+              workingDirectory: agents/infrastructure 
+
           - task: AzureCLI@2
-            displayName: 'Cleanup'
+            condition: always()
+            displayName: 'Cleanup VMI'
             inputs:
               azureSubscription: 'Azure'
               scriptType: 'bash'
@@ -101,3 +115,4 @@ stages:
                     --resource-group ${AZURE_RESOURCE_GROUP_IMAGES} \
                     --subscription ${AZURE_SUBSCRIPTION}
               addSpnToEnvironment: false
+
