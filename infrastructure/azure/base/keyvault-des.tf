@@ -27,3 +27,20 @@ resource "azurerm_key_vault_key" "des" {
     "wrapKey",
   ]
 }
+
+resource "azurerm_key_vault_key" "tf" {
+  name         = "tf-key-${local.project}"
+  key_vault_id = azurerm_key_vault.os_encryption.id
+  key_type     = "RSA"
+  key_size     = 4096
+  tags         = local.tags
+
+  key_opts = [
+    "decrypt",
+    "encrypt",
+    "sign",
+    "unwrapKey",
+    "verify",
+    "wrapKey",
+  ]
+}

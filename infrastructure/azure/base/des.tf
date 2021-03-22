@@ -10,8 +10,3 @@ resource "azurerm_disk_encryption_set" "des" {
   }
 }
 
-resource "azurerm_role_assignment" "keyvault_crypto_user" {
-  principal_id         = azurerm_disk_encryption_set.des.identity.0.principal_id
-  role_definition_name = "Key Vault Crypto User"
-  scope                = azurerm_resource_group.main.id
-}
