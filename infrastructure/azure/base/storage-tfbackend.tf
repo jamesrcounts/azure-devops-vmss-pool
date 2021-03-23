@@ -22,16 +22,16 @@ resource "azurerm_storage_account" "tfbackend" {
       days = 7
     }
   }
+}
 
-  network_rules {
-    bypass = [
-      "AzureServices",
-    ]
-    default_action             = "Deny"
-    ip_rules                   = []
-    virtual_network_subnet_ids = []
-  }
+resource "azurerm_storage_account_network_rules" "agents" {
+  resource_group_name  = azurerm_resource_group.main.name
+  storage_account_name = azurerm_storage_account.tfbackend.name
 
+  default_action             = "Allow"
+  ip_rules                   = []
+  virtual_network_subnet_ids = [azurerm_subnet.internal.id]
+  bypass                     = ["AzureServices"]
 }
 
 resource "azurerm_storage_account_customer_managed_key" "tf" {
@@ -42,4 +42,14 @@ resource "azurerm_storage_account_customer_managed_key" "tf" {
   storage_account_id = azurerm_storage_account.tfbackend.id
   key_vault_id       = azurerm_key_vault.os_encryption.id
   key_name           = azurerm_key_vault_key.tf.name
+}
+
+resource "azurerm_storage_container" "state" {
+  depends_on = [
+    azurerm_storage_account_network_rules.agents
+  ]
+
+  name                  = "tfstate"
+  storage_account_name  = azurerm_storage_account.tfbackend.name
+  container_access_type = "private"
 }

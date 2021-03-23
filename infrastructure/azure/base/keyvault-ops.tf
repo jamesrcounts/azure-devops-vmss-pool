@@ -10,6 +10,8 @@ locals {
     "rg-images"                   = azurerm_resource_group.images.name
     "rg-vnet"                     = azurerm_virtual_network.ops.resource_group_name
     "sig-name"                    = azurerm_shared_image_gallery.images.name
+    "tf-storage-account"          = azurerm_storage_account.tfbackend.name
+    "tf-storage-blob-container"   = azurerm_storage_container.state.name
   }
 }
 
