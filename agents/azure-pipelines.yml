@@ -13,7 +13,9 @@ variables:
     value: noninteractive
   - name: TF_IN_AUTOMATION
     value: true
-
+  - name: sig_image_version
+    value: $(Build.BuildNumber)
+    
 stages:
   - stage: 'bootstrap'
     pool: 'ado-vmss-pool-bootstrap'
@@ -51,6 +53,7 @@ stages:
                 done
 
           - task: AzureCLI@2
+            condition: eq($(sig_image_version), $(Build.BuildNumber))
             displayName: 'Build Agent Image Version'
             inputs:
               azureSubscription: 'Azure'
