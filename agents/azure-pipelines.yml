@@ -90,21 +90,25 @@ stages:
                   ${TEMPLATE_PATH}
               addSpnToEnvironment: true
 
-          - task: Bash@3
+          - task: AzureCLI@2
             displayName: 'Terraform Init'
             inputs:
-              targetType: 'inline'
-              script: |
+              azureSubscription: 'Azure'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
                 set -euo pipefail
+
+                AZURE_SUBSCRIPTION=$(az account show --query 'id' -o tsv)
                 
                 terraform init \
                   -input=false \
+                  -backend-config="subscription_id=${AZURE_SUBSCRIPTION}" \
                   -backend-config="storage_account_name=${TF_STORAGE_ACCOUNT}" \
                   -backend-config="container_name=${TF_STORAGE_BLOB_CONTAINER}" \
                   -backend-config="key=${PROJECT}.tfstate" 
                 terraform validate
                 terraform -v
-              failOnStderr: true
               workingDirectory: agents/infrastructure 
 
           - task: AzureCLI@2
