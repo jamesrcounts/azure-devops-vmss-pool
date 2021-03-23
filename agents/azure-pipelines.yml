@@ -14,7 +14,7 @@ variables:
   - name: TF_IN_AUTOMATION
     value: true
   - name: sig_image_version
-    value: $(Build.BuildNumber)
+    value: 0.0.54 #$(Build.BuildNumber)
   - name: PROJECT
     value: ado-vmss-pool
     
