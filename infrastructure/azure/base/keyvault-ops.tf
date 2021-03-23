@@ -12,6 +12,7 @@ locals {
     "sig-name"                    = azurerm_shared_image_gallery.images.name
     "tf-storage-account"          = azurerm_storage_account.tfbackend.name
     "tf-storage-blob-container"   = azurerm_storage_container.state.name
+    "tf-storage-rg"               = azurerm_resource_group.main.name
   }
 }
 
