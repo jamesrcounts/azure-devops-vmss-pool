@@ -6,6 +6,8 @@ locals {
     "rg-images",
     "rg-vnet",
     "sig-name",
+    "tf-storage-account",
+    "tf-storage-blob-container",
   ]
 }
 
