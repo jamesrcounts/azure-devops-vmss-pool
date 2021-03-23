@@ -53,7 +53,7 @@ stages:
                 done
 
           - task: AzureCLI@2
-            condition: eq(variables['sig_image_version'], Build.BuildNumber)
+            condition: eq(variables['sig_image_version'], variables['Build.BuildNumber'])
             displayName: 'Build Agent Image Version'
             inputs:
               azureSubscription: 'Azure'
