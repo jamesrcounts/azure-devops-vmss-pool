@@ -15,6 +15,8 @@ variables:
     value: true
   - name: sig_image_version
     value: $(Build.BuildNumber)
+  - name: PROJECT
+    value: ado-vmss-pool
     
 stages:
   - stage: 'bootstrap'
@@ -95,7 +97,11 @@ stages:
               script: |
                 set -euo pipefail
                 
-                terraform init -input=false
+                terraform init \
+                  -input=false \
+                  -backend-config="storage_account_name=${TF_STORAGE_ACCOUNT}" \
+                  -backend-config="container_name=${TF_STORAGE_BLOB_CONTAINER}" \
+                  -backend-config="key=${PROJECT}.tfstate" 
                 terraform validate
                 terraform -v
               failOnStderr: true
