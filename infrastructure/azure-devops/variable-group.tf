@@ -49,4 +49,9 @@ resource "azuredevops_variable_group" "variablegroup" {
     name  = "TF_STORAGE_BLOB_CONTAINER"
     value = data.azurerm_key_vault_secret.secrets["tf-storage-blob-container"].value
   }
+
+  variable {
+    name  = "TF_STORAGE_RG"
+    value = data.azurerm_key_vault_secret.secrets["tf-storage-rg"].value
+  }
 }

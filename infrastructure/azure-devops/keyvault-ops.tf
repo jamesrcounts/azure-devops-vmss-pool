@@ -8,6 +8,7 @@ locals {
     "sig-name",
     "tf-storage-account",
     "tf-storage-blob-container",
+    "tf-storage-rg",
   ]
 }
 
