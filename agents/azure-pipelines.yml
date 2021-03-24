@@ -153,6 +153,23 @@ stages:
                   -var="shared_image_version=$(sig_image_version)" \
                   -out ${BUILD_BUILDNUMBER}.tfplan
       
+          - task: ArchiveFiles@2
+            inputs:
+              rootFolderOrFile: '$(terraform_folder)'
+              includeRootFolder: false
+              archiveType: 'tar'
+              tarCompression: 'gz'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber).tgz'
+              replaceExistingArchive: true
+            displayName: 'Create Plan Artifact'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'drop'
+              publishLocation: 'Container'
+            displayName: 'Publish Plan Artifact'
+
           - task: AzureCLI@2
             condition: always()
             displayName: 'Cleanup VMI'
@@ -170,20 +187,3 @@ stages:
                     --name agent \
                     --resource-group ${AZURE_RESOURCE_GROUP_IMAGES} \
                     --subscription ${AZURE_SUBSCRIPTION}
-
-          - task: ArchiveFiles@2
-            inputs:
-              rootFolderOrFile: '$(terraform_folder)'
-              includeRootFolder: false
-              archiveType: 'tar'
-              tarCompression: 'gz'
-              archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber).tgz'
-              replaceExistingArchive: true
-            displayName: 'Create Plan Artifact'
-
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: 'drop'
-              publishLocation: 'Container'
-            displayName: 'Publish Plan Artifact'
