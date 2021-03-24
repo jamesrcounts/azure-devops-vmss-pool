@@ -88,7 +88,7 @@ stages:
                 packer --version
 
                 echo "Sanity Check"
-                packer validate -syntax-only ${TEMPLATE_PATH}
+                packer validate -syntax-only ${AGENTS_FOLDER}
                 
                 echo "Build VM Image"
                 packer build \
