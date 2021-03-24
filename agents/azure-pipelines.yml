@@ -72,7 +72,7 @@ stages:
                 echo "##vso[task.setvariable variable=AZURE_TENANT_ID;issecret=true]${tenantId}"
     
           - task: Bash@3
-            #condition: eq(variables['sig_image_version'], variables['Build.BuildNumber'])
+            condition: eq(variables['sig_image_version'], variables['Build.BuildNumber'])
             displayName: 'Build Agent Image Version'
             env:
               ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
