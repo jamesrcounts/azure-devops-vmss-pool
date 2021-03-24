@@ -13,14 +13,15 @@ variables:
     value: noninteractive
   - name: TF_IN_AUTOMATION
     value: true
-  - name: sig_image_version
-    value: 0.0.54 #$(Build.BuildNumber)
   - name: PROJECT
     value: ado-vmss-pool
     
 stages:
-  - stage: 'bootstrap'
+  - stage: 'build'
     pool: 'ado-vmss-pool-bootstrap'
+    variables:
+      - name: sig_image_version
+        value: 0.0.54 #$(Build.BuildNumber)
     jobs:
       - job: 
         displayName: 'Generate Agent Image'
@@ -91,7 +92,28 @@ stages:
               addSpnToEnvironment: true 
 
           - task: AzureCLI@2
+            displayName: 'Prepare Credentials'
+            inputs:
+              addSpnToEnvironment: true
+              azureSubscription: 'Azure'
+              scriptLocation: 'inlineScript'
+              scriptType: 'bash'
+              workingDirectory: agents/infrastructure 
+              inlineScript: |
+                set -euo pipefail
+
+                echo "##vso[task.setvariable variable=AZURE_CLIENT_ID;issecret=true]${servicePrincipalId}"
+                echo "##vso[task.setvariable variable=AZURE_CLIENT_SECRET;issecret=true]${servicePrincipalKey}"
+                echo "##vso[task.setvariable variable=AZURE_SUBSCRIPTION_ID;issecret=true]$(az account show --query 'id' -o tsv)"
+                echo "##vso[task.setvariable variable=AZURE_TENANT_ID;issecret=true]${tenantId}"
+
+          - task: AzureCLI@2
             displayName: 'Terraform Init'
+            env:
+              ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
+              ARM_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+              ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(AZURE_TENANT_ID)
             inputs:
               addSpnToEnvironment: true
               azureSubscription: 'Azure'
@@ -118,6 +140,11 @@ stages:
 
           - task: AzureCLI@2
             displayName: 'Terraform Plan'
+            env:
+              ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
+              ARM_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+              ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(AZURE_TENANT_ID)
             inputs:
               addSpnToEnvironment: false
               azureSubscription: 'Azure'
