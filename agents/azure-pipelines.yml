@@ -127,10 +127,6 @@ stages:
                 
                 terraform init \
                   -input=false \
-                  -backend-config="subscription_id=${AZURE_SUBSCRIPTION}" \
-                  -backend-config="client_id=${servicePrincipalId}" \
-                  -backend-config="client_secret=${servicePrincipalKey}" \
-                  -backend-config="tenant_id=${tenantId}" \
                   -backend-config="resource_group_name=${TF_STORAGE_RG}" \
                   -backend-config="storage_account_name=${TF_STORAGE_ACCOUNT}" \
                   -backend-config="container_name=${TF_STORAGE_BLOB_CONTAINER}" \
