@@ -17,18 +17,19 @@ variables:
     value: ado-vmss-pool
     
 stages:
-  - stage: 'build'
+  - stage: 'custom-image'
     pool: 'ado-vmss-pool-bootstrap'
-    variables:
-      - name: sig_image_version
-        value: 0.0.54 #$(Build.BuildNumber)
+
     jobs:
       - job: 
+        cancelTimeoutInMinutes: 30
         displayName: 'Generate Agent Image'
         timeoutInMinutes: 600
-        cancelTimeoutInMinutes: 30
         variables:
-          agents_folder: './agents'
+          - name: agents_folder
+            value: './agents'
+          - name: sig_image_version
+            value: 0.0.54 #$(Build.BuildNumber)        
         steps:
           - checkout: self
             fetchDepth: 1
@@ -168,4 +169,3 @@ stages:
                     --name agent \
                     --resource-group ${AZURE_RESOURCE_GROUP_IMAGES} \
                     --subscription ${AZURE_SUBSCRIPTION}
-
