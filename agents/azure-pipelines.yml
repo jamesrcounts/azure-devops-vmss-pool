@@ -119,6 +119,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'Terraform Plan'
             inputs:
+              addSpnToEnvironment: false
               azureSubscription: 'Azure'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
@@ -126,20 +127,18 @@ stages:
               inlineScript: |
                 set -euo pipefail
 
-                #     # Terraform Cloud doesn't allow the -var switch
-                #     # echo -e "shared_image_version = \"0.1.53\"" > variables.auto.tfvars
-                #     echo -e "shared_image_version = \"$(Build.BuildNumber)\"" > variables.auto.tfvars
-                  
                 terraform plan \
-                  -input=false
+                  -input=false \
+                  -var="shared_image_version=$(sig_image_version)"
 
           - task: AzureCLI@2
             condition: always()
             displayName: 'Cleanup VMI'
             inputs:
+              addSpnToEnvironment: false
               azureSubscription: 'Azure'
-              scriptType: 'bash'
               scriptLocation: 'inlineScript'
+              scriptType: 'bash'
               inlineScript: |
                 set -euo pipefail
 
@@ -149,5 +148,4 @@ stages:
                     --name agent \
                     --resource-group ${AZURE_RESOURCE_GROUP_IMAGES} \
                     --subscription ${AZURE_SUBSCRIPTION}
-              addSpnToEnvironment: false
 
