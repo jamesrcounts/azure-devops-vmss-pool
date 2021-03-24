@@ -71,7 +71,7 @@ stages:
                 echo "##vso[task.setvariable variable=AZURE_SUBSCRIPTION_ID;issecret=true]$(az account show --query 'id' -o tsv)"
                 echo "##vso[task.setvariable variable=AZURE_TENANT_ID;issecret=true]${tenantId}"
     
-          - task: AzureCLI@2
+          - task: Bash@3
             #condition: eq(variables['sig_image_version'], variables['Build.BuildNumber'])
             displayName: 'Build Agent Image Version'
             env:
@@ -80,15 +80,9 @@ stages:
               ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
               ARM_TENANT_ID: $(AZURE_TENANT_ID)
             inputs:
-              addSpnToEnvironment: false 
-              azureSubscription: 'Azure'
-              scriptLocation: 'inlineScript'
-              scriptType: 'bash'
-              inlineScript: |
+              targetType: 'inline'
+              script: |
                 set -euo pipefail
-
-                TEMPLATE_PATH=${AGENTS_FOLDER}
-                AZURE_SUBSCRIPTION=$(az account show --query 'id' -o tsv)
 
                 echo "Show Packer Version"
                 packer --version
@@ -110,7 +104,7 @@ stages:
                   -var "virtual_network_subnet_name=${PACKER_SUBNET_NAME}" \
                   -var "virtual_network_resource_group_name=${BUILD_AGENT_VNET_RESOURCE_GROUP}" \
                   -var "virtual_network_name=${BUILD_AGENT_VNET_NAME}" \
-                  ${TEMPLATE_PATH}
+                  ${AGENTS_FOLDER}
 
           - task: Bash@3
             displayName: 'Terraform Init'
