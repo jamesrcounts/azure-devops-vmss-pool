@@ -119,13 +119,18 @@ stages:
               script: |
                 set -euo pipefail
                 
+                echo "Initialize"
                 terraform init \
                   -input=false \
                   -backend-config="resource_group_name=${TF_STORAGE_RG}" \
                   -backend-config="storage_account_name=${TF_STORAGE_ACCOUNT}" \
                   -backend-config="container_name=${TF_STORAGE_BLOB_CONTAINER}" \
                   -backend-config="key=${PROJECT}.tfstate" 
+
+                echo "Sanity Check"
                 terraform validate
+
+                echo "Show Terraform Version"
                 terraform -v
 
           - task: Bash@3
@@ -143,7 +148,8 @@ stages:
 
                 terraform plan \
                   -input=false \
-                  -var="shared_image_version=$(sig_image_version)"
+                  -var="shared_image_version=$(sig_image_version)" \
+                  -out ${BUILD_BUILDNUMBER}.tfplan
       
           - task: AzureCLI@2
             condition: always()
