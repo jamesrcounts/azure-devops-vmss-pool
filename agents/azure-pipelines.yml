@@ -93,9 +93,11 @@ stages:
           - task: AzureCLI@2
             displayName: 'Terraform Init'
             inputs:
+              addSpnToEnvironment: true
               azureSubscription: 'Azure'
-              scriptType: 'bash'
               scriptLocation: 'inlineScript'
+              scriptType: 'bash'
+              workingDirectory: agents/infrastructure 
               inlineScript: |
                 set -euo pipefail
 
@@ -113,8 +115,23 @@ stages:
                   -backend-config="key=${PROJECT}.tfstate" 
                 terraform validate
                 terraform -v
+
+          - task: AzureCLI@2
+            displayName: 'Terraform Plan'
+            inputs:
+              azureSubscription: 'Azure'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
               workingDirectory: agents/infrastructure 
-              addSpnToEnvironment: true
+              inlineScript: |
+                set -euo pipefail
+
+                #     # Terraform Cloud doesn't allow the -var switch
+                #     # echo -e "shared_image_version = \"0.1.53\"" > variables.auto.tfvars
+                #     echo -e "shared_image_version = \"$(Build.BuildNumber)\"" > variables.auto.tfvars
+                  
+                terraform plan \
+                  -input=false
 
           - task: AzureCLI@2
             condition: always()
