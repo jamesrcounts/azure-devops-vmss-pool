@@ -17,7 +17,7 @@ variables:
     value: ado-vmss-pool
     
 stages:
-  - stage: 'custom-image'
+  - stage: 'custom_image'
     pool: 'ado-vmss-pool-bootstrap'
 
     jobs:
