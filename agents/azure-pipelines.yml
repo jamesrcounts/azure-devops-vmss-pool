@@ -138,7 +138,7 @@ stages:
                 terraform validate
                 terraform -v
 
-          - task: AzureCLI@2
+          - task: Bash@3
             displayName: 'Terraform Plan'
             env:
               ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
@@ -146,18 +146,15 @@ stages:
               ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
               ARM_TENANT_ID: $(AZURE_TENANT_ID)
             inputs:
-              addSpnToEnvironment: false
-              azureSubscription: 'Azure'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
+              targetType: 'inline'
               workingDirectory: agents/infrastructure 
-              inlineScript: |
+              script: |
                 set -euo pipefail
 
                 terraform plan \
                   -input=false \
                   -var="shared_image_version=$(sig_image_version)"
-
+      
           - task: AzureCLI@2
             condition: always()
             displayName: 'Cleanup VMI'
