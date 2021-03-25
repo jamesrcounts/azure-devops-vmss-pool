@@ -200,7 +200,8 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: none
+                - checkout: self
+                  fetchDepth: 1
 
                 - task: DownloadBuildArtifacts@0
                   inputs:
@@ -215,18 +216,39 @@ stages:
                   displayName: 'Extract Plan Artifact'
 
                 - task: Bash@3
+                  displayName: 'Install Tools'
                   inputs:
-                    filePath: './scripts/terraform-download.sh'
-                  displayName: 'Terraform Download'
+                    targetType: 'inline'
+                    script: |
+                      set -euo pipefail
+                      
+                      INSTALLER_FOLDER="${AGENTS_FOLDER}/scripts/bootstrap"
+                      chmod -Rv 777 "${INSTALLER_FOLDER}/"
+                      
+                      declare -a SCRIPTS=(
+                                          "azure-cli.sh"
+                                          "terraform.sh"
+                                          )
+                      
+                      for SCRIPT in "${SCRIPTS[@]}"
+                      do
+                        sudo -E sh -c "${INSTALLER_FOLDER}/${SCRIPT}"
+                      done
 
-                - task: AzureCLI@1
+                - task: AzureCLI@2
+                  displayName: 'Prepare Credentials'
                   inputs:
-                    azureSubscription: 'Azure MSDN'
-                    scriptLocation: 'scriptPath'
-                    scriptPath: './scripts/environment-setup.sh'
                     addSpnToEnvironment: true
-                    failOnStandardError: true
-                  displayName: 'Environment Setup'
+                    azureSubscription: 'Azure'
+                    scriptLocation: 'inlineScript'
+                    scriptType: 'bash'
+                    inlineScript: |
+                      set -euo pipefail
+
+                      echo "##vso[task.setvariable variable=AZURE_CLIENT_ID;issecret=true]${servicePrincipalId}"
+                      echo "##vso[task.setvariable variable=AZURE_CLIENT_SECRET;issecret=true]${servicePrincipalKey}"
+                      echo "##vso[task.setvariable variable=AZURE_SUBSCRIPTION_ID;issecret=true]$(az account show --query 'id' -o tsv)"
+                      echo "##vso[task.setvariable variable=AZURE_TENANT_ID;issecret=true]${tenantId}"
 
                 - task: Bash@3
                   inputs:
