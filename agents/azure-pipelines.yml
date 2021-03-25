@@ -235,7 +235,7 @@ stages:
                   inputs:
                     archiveFilePatterns: '$(System.ArtifactsDirectory)/drop/$(Build.BuildNumber).tgz'
                     destinationFolder: '$(terraform_folder)/'
-                    cleanDestinationFolder: false
+                    cleanDestinationFolder: true
 
                 - task: AzureCLI@2
                   displayName: 'Prepare Credentials'
