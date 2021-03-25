@@ -13,8 +13,6 @@ variables:
     value: noninteractive
   - name: TF_IN_AUTOMATION
     value: true
-  - name: TF_CLI_ARGS
-    value: '-input=false'
   - name: PROJECT
     value: ado-vmss-pool
   - name: terraform_folder
@@ -126,6 +124,7 @@ stages:
                 
                 echo "Initialize"
                 terraform init \
+                  -input=false \
                   -backend-config="resource_group_name=${TF_STORAGE_RG}" \
                   -backend-config="storage_account_name=${TF_STORAGE_ACCOUNT}" \
                   -backend-config="container_name=${TF_STORAGE_BLOB_CONTAINER}" \
@@ -151,6 +150,7 @@ stages:
                 set -euo pipefail
 
                 terraform plan \
+                  -input=false \
                   -var="shared_image_version=$(sig_image_version)" \
                   -out ${BUILD_BUILDNUMBER}.tfplan
       
@@ -225,16 +225,16 @@ stages:
                       done
 
                 - task: DownloadBuildArtifacts@0
+                  displayName: 'Download Plan Artifact'
                   inputs:
                     artifactName: 'drop'
-                  displayName: 'Download Plan Artifact'
 
                 - task: ExtractFiles@1
+                  displayName: 'Extract Plan Artifact'
                   inputs:
                     archiveFilePatterns: '$(System.ArtifactsDirectory)/drop/$(Build.BuildNumber).tgz'
                     destinationFolder: '$(System.DefaultWorkingDirectory)/'
                     cleanDestinationFolder: false
-                  displayName: 'Extract Plan Artifact'
 
                 - task: AzureCLI@2
                   displayName: 'Prepare Credentials'
@@ -265,4 +265,5 @@ stages:
                       set -euo pipefail
       
                       terraform apply \
+                        -input=false \
                         ${BUILD_BUILDNUMBER}.tfplan
