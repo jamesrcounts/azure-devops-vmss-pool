@@ -234,7 +234,7 @@ stages:
                   displayName: 'Extract Plan Artifact'
                   inputs:
                     archiveFilePatterns: '$(System.ArtifactsDirectory)/drop/$(Build.BuildNumber).tgz'
-                    destinationFolder: '$(System.DefaultWorkingDirectory)/'
+                    destinationFolder: '$(terraform_folder)/'
                     cleanDestinationFolder: false
 
                 - task: AzureCLI@2
@@ -263,7 +263,9 @@ stages:
                     targetType: 'inline'
                     workingDirectory: $(terraform_folder)
                     script: |
-                      set -euo pipefail
+                      set -euox pipefail
+
+                      ls -la
       
                       terraform apply \
                         -input=false \
