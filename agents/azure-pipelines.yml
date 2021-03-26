@@ -44,7 +44,7 @@ stages:
             fetchDepth: 1
 
           - task: PublishBuildArtifacts@1
-            condition: $(bootstrap_mode)
+            condition: eq(variables[bootstrap_mode], 'true')
             displayName: 'Publish Bootstrap Scripts'
             inputs:
               PathtoPublish: '$(installer_folder)'
@@ -52,7 +52,7 @@ stages:
               publishLocation: 'Container'
             
           - task: Bash@3
-            condition: $(bootstrap_mode)
+            condition: eq(variables[bootstrap_mode], 'true')
             displayName: 'Install Tools'
             inputs:
               targetType: 'inline'
@@ -216,13 +216,13 @@ stages:
             deploy:
               steps:
                 - task: DownloadBuildArtifacts@0
-                  condition: $(bootstrap_mode)
+                  condition: eq(variables[bootstrap_mode], 'true')
                   displayName: 'Download Scripts Artifact'
                   inputs:
                     artifactName: 'scripts'
 
                 - task: Bash@3
-                  condition: $(bootstrap_mode)
+                  condition: eq(variables[bootstrap_mode], 'true')
                   displayName: 'Install Tools'
                   inputs:
                     targetType: 'inline'
