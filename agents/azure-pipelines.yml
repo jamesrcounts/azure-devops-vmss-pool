@@ -36,7 +36,7 @@ stages:
         timeoutInMinutes: 600
         variables:
           - name: sig_image_version
-            value: '0.0.87' #$(Build.BuildNumber)        
+            value: $(Build.BuildNumber)
         steps:
           - checkout: self
             fetchDepth: 1
