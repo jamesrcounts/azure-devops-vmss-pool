@@ -21,7 +21,7 @@ variables:
   - name: bootstrap_pool
     value: ado-vmss-pool-bootstrap
   - name: pool
-    value: ado-vmss-pool-custom
+    value: ado-vmss-pool-bootstrap
   - name: installer_folder
     value: $(agents_folder)/scripts/bootstrap
 
@@ -36,7 +36,7 @@ stages:
         timeoutInMinutes: 600
         variables:
           - name: sig_image_version
-            value: $(Build.BuildNumber)        
+            value: $(Build.BuildNumber)
         steps:
           - checkout: self
             fetchDepth: 1
