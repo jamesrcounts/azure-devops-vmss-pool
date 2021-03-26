@@ -24,8 +24,6 @@ variables:
     value: ado-vmss-pool-custom
   - name: installer_folder
     value: $(agents_folder)/scripts/bootstrap
-  - name: bootstrap_mode
-    value: eq(variables['bootstrap_pool'], variables['pool'])
 
 stages:
   - stage: 'build'
@@ -44,7 +42,7 @@ stages:
             fetchDepth: 1
 
           - task: PublishBuildArtifacts@1
-            condition: eq(variables['bootstrap_mode'], 'true')
+            condition: eq(variables['bootstrap_pool'], variables['pool'])
             displayName: 'Publish Bootstrap Scripts'
             inputs:
               PathtoPublish: '$(installer_folder)'
@@ -52,7 +50,7 @@ stages:
               publishLocation: 'Container'
             
           - task: Bash@3
-            condition: eq(variables['bootstrap_mode'], 'true')
+            condition: eq(variables['bootstrap_pool'], variables['pool'])
             displayName: 'Install Tools'
             inputs:
               targetType: 'inline'
@@ -216,13 +214,13 @@ stages:
             deploy:
               steps:
                 - task: DownloadBuildArtifacts@0
-                  condition: eq(variables['bootstrap_mode'], 'true')
+                  condition: eq(variables['bootstrap_pool'], variables['pool'])
                   displayName: 'Download Scripts Artifact'
                   inputs:
                     artifactName: 'scripts'
 
                 - task: Bash@3
-                  condition: eq(variables['bootstrap_mode'], 'true')
+                  condition: eq(variables['bootstrap_pool'], variables['pool'])
                   displayName: 'Install Tools'
                   inputs:
                     targetType: 'inline'
