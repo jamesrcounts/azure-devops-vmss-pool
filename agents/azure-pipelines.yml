@@ -201,7 +201,6 @@ stages:
                     --resource-group ${AZURE_RESOURCE_GROUP_IMAGES} \
                     --subscription ${AZURE_SUBSCRIPTION}
 
-
   - stage: deploy
     pool: $(pool)
 
@@ -213,12 +212,6 @@ stages:
           runOnce:
             deploy:
               steps:
-                - task: DownloadBuildArtifacts@0
-                  condition: false
-                  displayName: 'Download Scripts Artifact'
-                  inputs:
-                    artifactName: 'scripts'
-
                 - task: Bash@3
                   condition: eq(variables['bootstrap_pool'], variables['pool'])
                   displayName: 'Install Tools'
@@ -241,15 +234,10 @@ stages:
                         sudo -E sh -c "${SCRIPT_FOLDER}/${SCRIPT}"
                       done
 
-                - task: DownloadBuildArtifacts@0
-                  displayName: 'Download Plan Artifact'
-                  inputs:
-                    artifactName: 'plan'
-
                 - task: ExtractFiles@1
                   displayName: 'Extract Plan Artifact'
                   inputs:
-                    archiveFilePatterns: '$(System.ArtifactsDirectory)/plan/$(Build.BuildNumber).tgz'
+                    archiveFilePatterns: '$(Pipeline.Workspace)/plan/$(Build.BuildNumber).tgz'
                     destinationFolder: '$(terraform_folder)/'
                     cleanDestinationFolder: true
 
