@@ -203,7 +203,7 @@ stages:
 
 
   - stage: deploy
-    pool: 'ado-vmss-pool-bootstrap'
+    pool: $(pool)
 
     jobs:
       - deployment: agents
