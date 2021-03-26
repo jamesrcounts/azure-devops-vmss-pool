@@ -263,9 +263,7 @@ stages:
                     targetType: 'inline'
                     workingDirectory: $(terraform_folder)
                     script: |
-                      set -euox pipefail
-
-                      ls -la
+                      set -euo pipefail
       
                       terraform apply \
                         -input=false \
