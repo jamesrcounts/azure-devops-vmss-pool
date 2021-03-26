@@ -5,6 +5,7 @@ locals {
     "log-analytics-workspace-id",  
     "log-analytics-workspace-key", 
     "rg-images",
+    "sig-image-name",
     "sig-name",
   ]
 }
