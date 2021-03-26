@@ -214,7 +214,7 @@ stages:
             deploy:
               steps:
                 - task: DownloadBuildArtifacts@0
-                  condition: eq(variables['bootstrap_pool'], variables['pool'])
+                  condition: false
                   displayName: 'Download Scripts Artifact'
                   inputs:
                     artifactName: 'scripts'
@@ -226,8 +226,9 @@ stages:
                     targetType: 'inline'
                     script: |
                       set -euo pipefail
-                      
-                      chmod -Rv 777 "${INSTALLER_FOLDER}/"
+
+                      SCRIPT_FOLDER='./scripts/bootstrap'
+                      chmod -Rv 777 "${SCRIPT_FOLDER}/"
                       
                       declare -a SCRIPTS=(
                                           "azure-cli.sh"
@@ -237,7 +238,7 @@ stages:
                       
                       for SCRIPT in "${SCRIPTS[@]}"
                       do
-                        sudo -E sh -c "${INSTALLER_FOLDER}/${SCRIPT}"
+                        sudo -E sh -c "${SCRIPT_FOLDER}/${SCRIPT}"
                       done
 
                 - task: DownloadBuildArtifacts@0
