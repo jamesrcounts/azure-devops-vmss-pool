@@ -5,7 +5,6 @@ trigger:
   branches:
     include:
       - main
-      - bootstrap-pipeline
 
 variables:
   - group: ado-vmss-pool
@@ -19,10 +18,14 @@ variables:
     value: agents/infrastructure
   - name: agents_folder
     value: './agents'
+  - name: bootstrap_pool
+    value: ado-vmss-pool-bootstrap
+  - name: pool
+    value: ado-vmss-pool-custom
 
 stages:
   - stage: 'build'
-    pool: 'ado-vmss-pool-bootstrap'
+    pool: $(pool)
 
     jobs:
       - job: 
@@ -37,6 +40,7 @@ stages:
             fetchDepth: 1
 
           - task: Bash@3
+            condition: eq(variables['bootstrap_pool'], variables['pool'])
             displayName: 'Install Tools'
             inputs:
               targetType: 'inline'

@@ -2,8 +2,22 @@ resource "azuredevops_build_definition" "build" {
   project_id = azuredevops_project.project.id
   name       = local.project
 
+  # ci_trigger {
+  #   use_yaml = true
+  # }
+
   ci_trigger {
-    use_yaml = true
+
+    override {
+      batch                            = false
+      max_concurrent_builds_per_branch = 1
+      polling_interval                 = 0
+
+      branch_filter {
+        exclude = []
+        include = ["custom-build"]
+      }
+    }
   }
 
   repository {
