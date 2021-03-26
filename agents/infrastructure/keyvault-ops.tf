@@ -1,19 +1,13 @@
 locals {
-  ops_secrets = [
-    "agents-vnet-name",
-    "location",
-    "packer-subnet-name",
+  ops_secrets =[
+    "agents-subnet-id",            
+    "disk-encryption-set-id",      
+    "log-analytics-workspace-id",  
+    "log-analytics-workspace-key", 
     "rg-images",
-    "rg-vnet",
+    "sig-image-name",
     "sig-name",
-    "tf-storage-account",
-    "tf-storage-blob-container",
-    "tf-storage-rg",
   ]
-}
-
-data "azurerm_resource_group" "main" {
-  name = "rg-${local.project}"
 }
 
 data "azurerm_key_vault" "ops" {

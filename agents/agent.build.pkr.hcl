@@ -1,9 +1,9 @@
 locals {
-  scripts           = "${path.root}/scripts"
-  remote_scripts    = "/imagegeneration"
-  remote_helpers    = "${local.remote_scripts}/helpers"
   bootstrap_scripts = "${local.scripts}/bootstrap"
   helpers           = "${local.scripts}/helpers"
+  remote_helpers    = "${local.remote_scripts}/helpers"
+  remote_scripts    = "/imagegeneration"
+  scripts           = "${path.root}/scripts"
 }
 
 build {
