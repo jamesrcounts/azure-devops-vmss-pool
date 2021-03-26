@@ -24,6 +24,8 @@ variables:
     value: ado-vmss-pool-custom
   - name: installer_folder
     value: $(agents_folder)/scripts/bootstrap
+  - name: bootstrap_mode
+    value: eq(variables['bootstrap_pool'], variables['pool'])
 
 stages:
   - stage: 'build'
@@ -41,8 +43,16 @@ stages:
           - checkout: self
             fetchDepth: 1
 
+          - task: PublishBuildArtifacts@1
+            condition: $(bootstrap_mode)
+            displayName: 'Publish Bootstrap Scripts'
+            inputs:
+              PathtoPublish: '$(installer_folder)'
+              ArtifactName: 'scripts'
+              publishLocation: 'Container'
+            
           - task: Bash@3
-            condition: eq(variables['bootstrap_pool'], variables['pool'])
+            condition: $(bootstrap_mode)
             displayName: 'Install Tools'
             inputs:
               targetType: 'inline'
@@ -159,6 +169,7 @@ stages:
                   -out ${BUILD_BUILDNUMBER}.tfplan
       
           - task: ArchiveFiles@2
+            displayName: 'Create Plan Artifact'
             inputs:
               rootFolderOrFile: '$(terraform_folder)'
               includeRootFolder: false
@@ -166,22 +177,13 @@ stages:
               tarCompression: 'gz'
               archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber).tgz'
               replaceExistingArchive: true
-            displayName: 'Create Plan Artifact'
 
           - task: PublishBuildArtifacts@1
+            displayName: 'Publish Plan Artifact'
             inputs:
               PathtoPublish: '$(Build.ArtifactStagingDirectory)'
               ArtifactName: 'plan'
               publishLocation: 'Container'
-            displayName: 'Publish Plan Artifact'
-
-          - task: PublishBuildArtifacts@1
-            condition: eq(variables['bootstrap_pool'], variables['pool'])
-            inputs:
-              PathtoPublish: '$(installer_folder)'
-              ArtifactName: 'scripts'
-              publishLocation: 'Container'
-            displayName: 'Publish Bootstrap Scripts'
 
           - task: AzureCLI@2
             condition: always()
@@ -214,11 +216,13 @@ stages:
             deploy:
               steps:
                 - task: DownloadBuildArtifacts@0
+                  condition: $(bootstrap_mode)
                   displayName: 'Download Scripts Artifact'
                   inputs:
                     artifactName: 'scripts'
 
                 - task: Bash@3
+                  condition: $(bootstrap_mode)
                   displayName: 'Install Tools'
                   inputs:
                     targetType: 'inline'
