@@ -13,4 +13,14 @@ resource "azuredevops_build_definition" "build" {
     service_connection_id = azuredevops_serviceendpoint_github.endpoint.id
     yml_path              = "agents/azure-pipelines.yml"
   }
+
+  variable {
+    name  = "sig_image_version"
+    value = "$(Build.BuildNumber)"
+  }
+
+  variable {
+    name  = "pool"
+    value = "ado-vmss-pool-custom"
+  }
 }

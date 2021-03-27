@@ -5,7 +5,6 @@ trigger:
   branches:
     include:
       - main
-      - bootstrap-pipeline
 
 variables:
   - group: ado-vmss-pool
@@ -19,31 +18,40 @@ variables:
     value: agents/infrastructure
   - name: agents_folder
     value: './agents'
+  - name: bootstrap_pool
+    value: ado-vmss-pool-bootstrap
+  - name: installer_folder
+    value: $(agents_folder)/scripts/bootstrap
 
 stages:
   - stage: 'build'
-    pool: 'ado-vmss-pool-bootstrap'
+    pool: $(pool)
 
     jobs:
       - job: 
         cancelTimeoutInMinutes: 30
         displayName: 'Generate Agent Image'
         timeoutInMinutes: 600
-        variables:
-          - name: sig_image_version
-            value: $(Build.BuildNumber)        
         steps:
           - checkout: self
             fetchDepth: 1
 
+          - task: PublishBuildArtifacts@1
+            condition: eq(variables['bootstrap_pool'], variables['pool'])
+            displayName: 'Publish Bootstrap Scripts'
+            inputs:
+              PathtoPublish: '$(installer_folder)'
+              ArtifactName: 'scripts'
+              publishLocation: 'Container'
+            
           - task: Bash@3
+            condition: eq(variables['bootstrap_pool'], variables['pool'])
             displayName: 'Install Tools'
             inputs:
               targetType: 'inline'
               script: |
                 set -euo pipefail
                 
-                INSTALLER_FOLDER="${AGENTS_FOLDER}/scripts/bootstrap"
                 chmod -Rv 777 "${INSTALLER_FOLDER}/"
                 
                 declare -a SCRIPTS=(
@@ -154,6 +162,7 @@ stages:
                   -out ${BUILD_BUILDNUMBER}.tfplan
       
           - task: ArchiveFiles@2
+            displayName: 'Create Plan Artifact'
             inputs:
               rootFolderOrFile: '$(terraform_folder)'
               includeRootFolder: false
@@ -161,14 +170,13 @@ stages:
               tarCompression: 'gz'
               archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber).tgz'
               replaceExistingArchive: true
-            displayName: 'Create Plan Artifact'
 
           - task: PublishBuildArtifacts@1
+            displayName: 'Publish Plan Artifact'
             inputs:
               PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: 'drop'
+              ArtifactName: 'plan'
               publishLocation: 'Container'
-            displayName: 'Publish Plan Artifact'
 
           - task: AzureCLI@2
             condition: always()
@@ -188,9 +196,8 @@ stages:
                     --resource-group ${AZURE_RESOURCE_GROUP_IMAGES} \
                     --subscription ${AZURE_SUBSCRIPTION}
 
-
   - stage: deploy
-    pool: 'ado-vmss-pool-bootstrap'
+    pool: $(pool)
 
     jobs:
       - deployment: agents
@@ -200,18 +207,16 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
-                  fetchDepth: 1
-
                 - task: Bash@3
+                  condition: eq(variables['bootstrap_pool'], variables['pool'])
                   displayName: 'Install Tools'
                   inputs:
                     targetType: 'inline'
                     script: |
                       set -euo pipefail
-                      
-                      INSTALLER_FOLDER="${AGENTS_FOLDER}/scripts/bootstrap"
-                      chmod -Rv 777 "${INSTALLER_FOLDER}/"
+
+                      SCRIPT_FOLDER='$(Pipeline.Workspace)/scripts'
+                      chmod -Rv 777 "${SCRIPT_FOLDER}/"
                       
                       declare -a SCRIPTS=(
                                           "azure-cli.sh"
@@ -221,18 +226,13 @@ stages:
                       
                       for SCRIPT in "${SCRIPTS[@]}"
                       do
-                        sudo -E sh -c "${INSTALLER_FOLDER}/${SCRIPT}"
+                        sudo -E sh -c "${SCRIPT_FOLDER}/${SCRIPT}"
                       done
-
-                - task: DownloadBuildArtifacts@0
-                  displayName: 'Download Plan Artifact'
-                  inputs:
-                    artifactName: 'drop'
 
                 - task: ExtractFiles@1
                   displayName: 'Extract Plan Artifact'
                   inputs:
-                    archiveFilePatterns: '$(System.ArtifactsDirectory)/drop/$(Build.BuildNumber).tgz'
+                    archiveFilePatterns: '$(Pipeline.Workspace)/plan/$(Build.BuildNumber).tgz'
                     destinationFolder: '$(terraform_folder)/'
                     cleanDestinationFolder: true
 
