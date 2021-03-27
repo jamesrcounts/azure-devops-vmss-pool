@@ -17,6 +17,11 @@ resource "azuredevops_build_definition" "build" {
         exclude = []
         include = ["custom-build"]
       }
+
+      path_filter {
+        exclude=[]
+        include =[]
+      }
     }
   }
 
@@ -26,5 +31,10 @@ resource "azuredevops_build_definition" "build" {
     repo_type             = "GitHub"
     service_connection_id = azuredevops_serviceendpoint_github.endpoint.id
     yml_path              = "agents/azure-pipelines.yml"
+  }
+
+  variable {
+    name  = "sig_image_version"
+    value = "$(Build.BuildNumber)"
   }
 }
