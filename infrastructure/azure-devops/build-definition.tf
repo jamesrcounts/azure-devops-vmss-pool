@@ -34,9 +34,8 @@ resource "azuredevops_build_definition" "build" {
   }
 
   variable {
-    name = "sig_image_version"
-    # value = "$(Build.BuildNumber)"
-    value = "0.0.101"
+    name  = "sig_image_version"
+    value = "$(Build.BuildNumber)"
   }
 
   variable {
