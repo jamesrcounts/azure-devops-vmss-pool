@@ -34,9 +34,6 @@ stages:
         cancelTimeoutInMinutes: 30
         displayName: 'Generate Agent Image'
         timeoutInMinutes: 600
-        variables:
-          - name: sig_image_version
-            value: $(Build.BuildNumber)
         steps:
           - checkout: self
             fetchDepth: 1
