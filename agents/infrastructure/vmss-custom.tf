@@ -1,5 +1,5 @@
 module "vmss-custom" {
-  source = "github.com/jamesrcounts/terraform-packer.git//infrastructure/azure/modules/vmss"
+  source = "github.com/jamesrcounts/azure-devops-vmss-pool.git//infrastructure/azure/modules/vmss-pool"
 
   disk_encryption_set_id = data.azurerm_key_vault_secret.secrets["disk-encryption-set-id"].value
   project                = "${local.project}-custom"
