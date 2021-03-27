@@ -19,8 +19,8 @@ resource "azuredevops_build_definition" "build" {
       }
 
       path_filter {
-        exclude=[]
-        include =[]
+        exclude = []
+        include = []
       }
     }
   }
@@ -34,7 +34,13 @@ resource "azuredevops_build_definition" "build" {
   }
 
   variable {
-    name  = "sig_image_version"
-    value = "$(Build.BuildNumber)"
+    name = "sig_image_version"
+    # value = "$(Build.BuildNumber)"
+    value = "0.0.101"
+  }
+
+  variable {
+    name  = "pool"
+    value = "ado-vmss-pool-custom"
   }
 }

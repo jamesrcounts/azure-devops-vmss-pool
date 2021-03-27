@@ -20,8 +20,6 @@ variables:
     value: './agents'
   - name: bootstrap_pool
     value: ado-vmss-pool-bootstrap
-  - name: pool
-    value: ado-vmss-pool-custom
   - name: installer_folder
     value: $(agents_folder)/scripts/bootstrap
 
